@@ -10,8 +10,14 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.createUser = async (req, res) => {
+    const { name, email } = req.body;
+    if (!name) {
+        return res.status(400).send('User Name is required');
+    }
+    if (!email) {
+        return res.status(400).send('Email is required');
+    }
     try {
-        const { name, email } = req.body;
         const newUser = await userModel.createUser(name, email);
         res.json(newUser.rows[0]);
     } catch (error) {
