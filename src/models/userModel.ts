@@ -1,10 +1,13 @@
 import { query } from '../db';
 import { QueryResult } from 'pg';
+import bcrypt from 'bcrypt';
+import {log} from "node:util";
 
 interface User {
     id?: number;
     name?: string;
     email?: string;
+    password?: string;
 }
 
 export const getAllUsers = async (): Promise<User[]> => {
@@ -16,12 +19,19 @@ export const getAllUsers = async (): Promise<User[]> => {
         throw error;
     }
 };
+const saltRounds = 10;
 
-export const createUser = async (name: string, email: string): Promise<User> => {
+
+export const createUser = async (name: string, email: string, password: string): Promise<User> => {
+    console.log(name, email, password);
     try {
+       const passwordHash = await bcrypt.hash(password, saltRounds);
+        console.log(name, email, password);
+        console.log(passwordHash);
+
         const result: QueryResult<User> = await query(
-            'INSERT INTO users (name, email) VALUES ($1, $2) RETURNING *',
-            [name, email]
+            'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *',
+            [name, email, passwordHash]
         );
         return result.rows[0];
     } catch (error) {

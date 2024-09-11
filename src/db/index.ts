@@ -11,4 +11,7 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD,
 });
 
-export const query = (text: string, params?: any[]) => pool.query(text, params);
+export const query = (text: string, params?: any[]) => {
+    console.log(text, params);
+    return pool.query(text, params)
+};
