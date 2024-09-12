@@ -1,7 +1,6 @@
 import { query } from '../db';
 import { QueryResult } from 'pg';
 import bcrypt from 'bcrypt';
-import {log} from "node:util";
 
 interface User {
     id?: number;

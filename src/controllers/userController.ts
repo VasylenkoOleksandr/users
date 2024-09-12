@@ -16,30 +16,26 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
 };
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-    console.log('1', 1)
     try {
-        console.log('2', 2)
         const { name, email, password } = req.body;
 
-        if (!name) {
-            console.log('3', 3)
-            res.status(422).send('name is a mandatory field');
+        if (!name && typeof name !== 'string') {
+            res.status(422).send('"Name" is a mandatory field and must be a string');
             return;
         }
-
-        if (!email) {
-            res.status(422).send('email is a mandatory field');
+        const validateEmail = (email?: string): boolean => {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return email ? re.test(email) : true;
+        };
+        if (!email && typeof email !== 'string' && !validateEmail(email)) {
+            res.status(422).send('"Email" is a mandatory field and must be a string');
             return;
         }
 
         if (!password) {
-            res.status(422).send('password is a mandatory field');
+            res.status(422).send('"Password" is a mandatory field');
             return;
         }
-
-        // Логирование перед созданием пользователя
-        console.log('Creating user with:', { name, email, password });
-
         const newUser = await userModel.createUser(name, email, password);
 
         console.log('Created user:', newUser);
